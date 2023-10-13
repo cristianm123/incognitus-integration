@@ -8,14 +8,14 @@ function PatientList() {
   const [mocaQuestions, setMocaQuestions] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:4020/api/patients').then(response => {
+    axios.get('http://192.168.1.105:4020/api/patients').then(response => {
       setPatients(response.data);
     });
   }, []);
 
   const handlePatientClick = (id) => {
     setSelectedPatientId(id);
-    axios.get(`http://localhost:4020/api/patients/${id}/evaluations/MoCA`)
+    axios.get(`http://192.168.1.105:4020/api/patients/${id}/evaluations/MoCA`)
       .then(response => {
         setMocaQuestions(response.data);
       });
@@ -23,14 +23,12 @@ function PatientList() {
 
   return (
     <div>
-      <h2>Patients</h2>
-      <ul>
+      <h2 className='mt-5'>Pacientes</h2>
+      <ul class="list-group mb-5">
         {patients.map(patient => (
-          <li key={patient.numberId}>
-            <button onClick={() => handlePatientClick(patient.numberId)}>
-              {patient.name} {/* Assuming your patient object has a name field */}
+            <button key={patient.numberId} className='list-group-item list-group-item-action' onClick={() => handlePatientClick(patient.numberId)}>
+              {patient.name}
             </button>
-          </li>
         ))}
       </ul>
 

@@ -57,7 +57,6 @@ function QuestionComponentSelector({ question }) {
 function MocaQuestionDisplay({ questions }) {
   return (
     <div>
-      <h2>MoCA Questions for Patient</h2>
       {questions.map((question, index) => (
         <QuestionComponentSelector key={index} question={question} />
       ))}

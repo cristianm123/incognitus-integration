@@ -5,11 +5,17 @@ function AbstractionQuestion({ question }) {
     <div>
       <h4>{question.testName}</h4>
       <ul>
-        {question.phrasesToRepeat.map((phraseObj, idx) => (
-          <li key={idx}>
-            {phraseObj.phraseToRepeat} - {phraseObj.repeatedCorrectly ? "Repeated Correctly" : "Not Repeated Correctly"}
-          </li>
-        ))}
+        {question.phrasesToRepeat.map((phraseObj, idx) => {
+          if(idx > 0) {
+            return (
+              <li key={idx}>
+                {phraseObj.phraseToRepeat} - {phraseObj.repeatedCorrectly ? "Repeated Correctly" : "Not Repeated Correctly"}
+              </li>
+            )
+          } else {
+            return ("")
+          }
+        })}
       </ul>
     </div>
   );

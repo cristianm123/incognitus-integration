@@ -4,13 +4,13 @@ function MemoryFinalQuestion({ question }) {
   return (
     <div>
       <h4>{question.testName}</h4>
-      <p>Selected Words:</p>
+      <p>Palabras seleccionadas:</p>
       <ul>
         {question.selectedWords.map((word, idx) => (
           <li key={idx}>{word}</li>
         ))}
       </ul>
-      <p>Words to Remember:</p>
+      <p>Conjunto de palabras:</p>
       <ul>
         {question.wordsToRemember.map((word, idx) => (
           <li key={idx}>{word}</li>

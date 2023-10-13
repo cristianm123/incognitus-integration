@@ -5,12 +5,12 @@ function OrientationQuestion({ question }) {
     <div>
       <h4>{question.testName}</h4>
       <ul>
-        <li>Correct Day: {question.correctDay ? "Yes" : "No"}</li>
-        <li>Correct Year: {question.correctYear ? "Yes" : "No"}</li>
-        <li>Correct Month: {question.correctMonth ? "Yes" : "No"}</li>
-        <li>Correct Place: {question.correctPlace ? "Yes" : "No"}</li>
-        <li>Correct Locality: {question.correctLocality ? "Yes" : "No"}</li>
-        <li>Correct Day of the Week: {question.correctDayOfWeek ? "Yes" : "No"}</li>
+        <li>Día: {question.correctDay ? "Sí" : "No"}</li>
+        <li>Año: {question.correctYear ? "Sí" : "No"}</li>
+        <li>Mes: {question.correctMonth ? "Sí" : "No"}</li>
+        <li>Sitio: {question.correctPlace ? "Sí" : "No"}</li>
+        <li>Localidad: {question.correctLocality ? "Sí" : "No"}</li>
+        <li>Día de la semana: {question.correctDayOfWeek ? "Sí" : "No"}</li>
       </ul>
     </div>
   );

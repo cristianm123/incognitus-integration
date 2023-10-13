@@ -6,14 +6,18 @@ function SpeechQuestion({ question }) {
   return (
     <div>
       <h4>{question.testName}</h4>
-      <p>Letter Given: {question.startLetter}</p>
       <AudioPlayer
-        src={`http://localhost:9000/incognitus-processed-data/${question.recordingPath}`} 
+        src={`http://192.168.1.105:9000/incognitus-processed-data/${question.recordingPath}`} 
         style={{ width: '500px', height: '200' }}
         autoPlayAfterSrcChange={false}
         // other props here
-      />
-      <p>{question.transcription}</p>
+        />
+      
+      <p className='mt-3'>
+        Letra: {question.startLetter}
+        <br />
+        {question.transcription}
+      </p>
     </div>
   );
 }

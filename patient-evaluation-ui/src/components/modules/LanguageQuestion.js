@@ -7,7 +7,10 @@ function LanguageQuestion({ question }) {
       <ul>
         {question.phrasesToRepeat.map((phrase, idx) => (
           <li key={idx}>
-            {phrase.phraseToRepeat} - {phrase.repeatedCorrectly ? "Repeated Correctly" : "Incorrect"}
+            <span className={phrase.repeatedCorrectly ? "text-success" : "text-danger" }>
+              {phrase.phraseToRepeat}
+            </span>
+            
           </li>
         ))}
       </ul>
