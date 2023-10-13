@@ -1,0 +1,11 @@
+# Ignorar archivos y directorios generados por Angular CLI
+/dist
+/tmp
+/e2e
+
+# Ignorar archivos y directorios específicos
+/node_modules
+/.git
+/.idea
+/.vscode
+.DS_Store
