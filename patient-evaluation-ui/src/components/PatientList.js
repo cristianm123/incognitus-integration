@@ -8,14 +8,14 @@ function PatientList() {
   const [mocaQuestions, setMocaQuestions] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:4020/api/patients').then(response => {
+    axios.get('http://192.168.1.7:4020/api/patients').then(response => {
       setPatients(response.data);
     });
   }, []);
 
   const handlePatientClick = (id) => {
     setSelectedPatientId(id);
-    axios.get(`http://localhost:4020/api/patients/${id}/evaluations/MoCA`)
+    axios.get(`http://192.168.1.7:4020/api/patients/${id}/evaluations/MoCA`)
       .then(response => {
         setMocaQuestions(response.data);
       });

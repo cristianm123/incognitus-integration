@@ -85,6 +85,16 @@ class MySQLService:
         self._cursor.execute(query, (str(patient_id),))
         count = self._cursor.fetchone()[0]
         return count > 0
+    
+    def evaluation_exists(self, patient_id, evaluation_name, date_response):
+        query = """
+        SELECT COUNT(*) 
+        FROM evaluation 
+        WHERE patientNumberId = %s AND evaluationName = %s AND dateResponse = %s
+        """
+        self._cursor.execute(query, (str(patient_id), evaluation_name, date_response))
+        count = self._cursor.fetchone()[0]
+        return count > 0
 
     def _parse_field(self, field):
         """

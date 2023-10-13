@@ -3,6 +3,8 @@ import os
 from incognitus_processing.mysql_service import MySQLService
 from incognitus_processing import mysql_host, mysql_user, mysql_password, mysql_database
 from incognitus_processing.data_handler import DataHandler
+from pymysql.err import IntegrityError
+import logging
 
 
 class DataExporter(DataHandler):
@@ -45,9 +47,13 @@ class DataExporter(DataHandler):
                 self.mysql.insert_values('patient', patient)
 
             for evaluation in evaluations.values():
-                evaluation['patientNumberId'] = patient['numberId']
-                evaluation['questions'] = json.dumps(evaluation['questions'], ensure_ascii=False)
-                self.mysql.insert_values('evaluation', evaluation)
+                if not self.mysql.evaluation_exists(patient['numberId'], evaluation['evaluationName'], evaluation['dateResponse']):
+                    evaluation['patientNumberId'] = patient['numberId']
+                    evaluation['questions'] = json.dumps(evaluation['questions'], ensure_ascii=False)
+                    try:
+                        self.mysql.insert_values('evaluation', evaluation)
+                    except:
+                        pass
 
             self.mysql.commit_changes()
 

@@ -39,7 +39,7 @@ class DataProcessor(DataHandler):
             output_directory (str): The directory where processed data will be saved.
         """
         super().__init__(input_directory)
-        self._transcriber = WhisperProcessor(model='large', device='cpu')
+        self._transcriber = WhisperProcessor(model='tiny', device='cpu')
         self._output_directory = output_directory
         self.file_mapping = dict()
 

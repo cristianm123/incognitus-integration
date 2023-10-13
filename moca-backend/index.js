@@ -36,7 +36,7 @@ app.get('/api/patients/:id/evaluations', (req, res) => {
 
 app.get('/api/patients/:id/evaluations/MoCA', (req, res) => {
   const id = req.params.id;
-  db.query('SELECT questions FROM evaluation WHERE patientNumberId = ? AND evaluationName = "MoCA"', [id], (err, results) => {
+  db.query('SELECT questions FROM evaluation WHERE patientNumberId = ? AND evaluationName = "MoCA" ORDER BY dateResponse DESC LIMIT 1', [id], (err, results) => {
       if (err) throw err;
         // Check if there are results and send only the 'questions' value
       if (results.length > 0) {
