@@ -8,7 +8,7 @@ function SpeechQuestion({ question }) {
       <h4>{question.testName}</h4>
       <p>Letter Given: {question.startLetter}</p>
       <AudioPlayer
-        src={`http://192.168.1.7:9000/incognitus-processed-data/${question.recordingPath}`} 
+        src={`http://localhost:9000/incognitus-processed-data/${question.recordingPath}`} 
         style={{ width: '500px', height: '200' }}
         autoPlayAfterSrcChange={false}
         // other props here
