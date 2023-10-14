@@ -9,7 +9,7 @@ function AbstractionQuestion({ question }) {
           if(idx > 0) {
             return (
               <li key={idx}>
-                {phraseObj.phraseToRepeat} - {phraseObj.repeatedCorrectly ? "Repeated Correctly" : "Not Repeated Correctly"}
+                {phraseObj.phraseToRepeat} - {phraseObj.repeatedCorrectly ? "Correcto" : "Incorrecto"}
               </li>
             )
           } else {

@@ -58,7 +58,10 @@ function MocaQuestionDisplay({ questions }) {
   return (
     <div>
       {questions.map((question, index) => (
-        <QuestionComponentSelector key={index} question={question} />
+        <div key={index} style={{ display: 'block', alignItems: 'center' }}>
+          <QuestionComponentSelector key={index} question={question} />
+        <span style={{ marginLeft: '10px' }}>Puntaje: {question.score}</span>
+        </div>
       ))}
     </div>
   );
