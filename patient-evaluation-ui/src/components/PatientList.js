@@ -8,14 +8,22 @@ function PatientList() {
   const [mocaQuestions, setMocaQuestions] = useState([]);
 
   useEffect(() => {
-    axios.get('http://192.168.1.105:4020/api/patients').then(response => {
+    axios.get('http://localhost:4020/api/patients').then(response => {
       setPatients(response.data);
     });
   }, []);
 
   const handlePatientClick = (id) => {
     setSelectedPatientId(id);
-    axios.get(`http://192.168.1.105:4020/api/patients/${id}/evaluations/MoCA`)
+    axios.get(`http://localhost:4020/api/patients/${id}/evaluations/MoCA`)
+      .then(response => {
+        setMocaQuestions(response.data);
+      });
+  };
+
+  const handleSelectChange = (event) => {
+    setSelectedPatientId(event.target.value);
+    axios.get(`http://localhost:4020/api/patients/${event.target.value}/evaluations/MoCA`)
       .then(response => {
         setMocaQuestions(response.data);
       });
@@ -24,13 +32,14 @@ function PatientList() {
   return (
     <div>
       <h2 className='mt-5'>Pacientes</h2>
-      <ul class="list-group mb-5">
+      <select className='form-select mb-5' value={selectedPatientId} onChange={handleSelectChange}>
+        <option value="">Select a patient</option>
         {patients.map(patient => (
-            <button key={patient.numberId} className='list-group-item list-group-item-action' onClick={() => handlePatientClick(patient.numberId)}>
-              {patient.name}
-            </button>
+          <option key={patient.numberId} value={patient.numberId}>
+            {patient.name} {patient.lastname} - {patient.numberId}
+          </option>
         ))}
-      </ul>
+      </select>
 
       {selectedPatientId && (
         <MocaQuestionDisplay questions={mocaQuestions} />

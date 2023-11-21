@@ -20,7 +20,7 @@ db.connect((err) => {
 });
 
 app.get('/api/patients', (req, res) => {
-    db.query('SELECT * FROM patient', (err, results) => {
+    db.query('SELECT * FROM patient WHERE numberId IN (SELECT patientNumberId FROM evaluation WHERE evaluationName = "MoCA")', (err, results) => {
         if (err) throw err;
         res.json(results);
     });
