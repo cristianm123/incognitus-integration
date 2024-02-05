@@ -1,0 +1,94 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    networks:
+      - incognitus-net
+    ports:
+      - "3306:3306"
+    volumes:
+      - C:/mysql:/var/lib/mysql
+      - ./mhealth-incognitus-backend/mysql_scripts/:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: incognitus
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 3
+
+  incognitus:
+    build:
+      context: mhealth-incognitus-backend
+      dockerfile: Dockerfile # Adjust the path if needed
+    container_name: incognitus
+    networks:
+      - incognitus-net
+    environment:
+      END_BUCKET: ${END_BUCKET}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
+      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - C:/Users/cristian.molinaa/.cache:/root/.cache
+    depends_on:
+      - mysql
+
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio
+    networks:
+      - incognitus-net
+    ports:
+      - "9000:9000"
+      - "9090:9090"
+    volumes:
+      - /c/minio/data:/data
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server /data --console-address ":9090"
+
+  mc:
+    image: minio/mc
+    container_name: mc
+    depends_on:
+      - minio
+      - incognitus
+    networks:
+      - incognitus-net
+    volumes:
+      - ./mhealth-incognitus-backend/minio_init.sh:/minio_init.sh
+    env_file: .env
+    entrypoint:
+      - /minio_init.sh
+
+  backend:
+    build:
+      context: moca-backend
+      dockerfile: Dockerfile # Adjust the path if needed
+    container_name: backend
+    ports:
+      - "4020:4020"
+    networks:
+      - incognitus-net
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: patient-evaluation-ui
+      dockerfile: Dockerfile # Adjust the path if needed
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - incognitus-net
+    depends_on:
+      - backend
+
+networks:
+  incognitus-net:
+    driver: bridge
