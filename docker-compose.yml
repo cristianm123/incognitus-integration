@@ -8,7 +8,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - C:/mysql:/var/lib/mysql
+      - incognitus_db:/var/lib/mysql
       - ./mhealth-incognitus-backend/mysql_scripts/:/docker-entrypoint-initdb.d
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -30,8 +30,6 @@ services:
       MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
       MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
       MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    volumes:
-      - C:/Users/cristian.molinaa/.cache:/root/.cache
     depends_on:
       - mysql
 
@@ -44,7 +42,7 @@ services:
       - "9000:9000"
       - "9090:9090"
     volumes:
-      - /c/minio/data:/data
+      - incognitus_data:/data
     environment:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
@@ -67,12 +65,13 @@ services:
   backend:
     build:
       context: moca-backend
-      dockerfile: Dockerfile # Adjust the path if needed
+      dockerfile: Dockerfile
     container_name: backend
     ports:
       - "4020:4020"
     networks:
       - incognitus-net
+      - proxy
     depends_on:
       mysql:
         condition: service_healthy
@@ -80,15 +79,29 @@ services:
   frontend:
     build:
       context: patient-evaluation-ui
-      dockerfile: Dockerfile # Adjust the path if needed
+      dockerfile: Dockerfile
     container_name: frontend
-    ports:
-      - "3000:3000"
     networks:
       - incognitus-net
+      - proxy
     depends_on:
       - backend
+    deploy:
+      replicas: 1
+      labels:
+        com.df.distribute: "true"
+        com.df.notify: "true"
+        com.df.port: "3000"
+        com.df.servicePath: "/incognitus"
+
+volumes:
+  incognitus_data:
+    external: true
+  incognitus_db:
+    external: true
 
 networks:
   incognitus-net:
-    driver: bridge
+    driver: overlay
+  proxy:
+    external: true
