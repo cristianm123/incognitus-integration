@@ -4,8 +4,28 @@ const cors = require('cors');
 
 const app = express();
 const port = 4020;
+const publicUrl = "/moca";
 
 app.use(cors());  // Enable CORS for all routes
+
+const buildPath = path.join(__dirname, "build");
+app.use(express.static(buildPath));
+app.get("/*", (req, res) => {
+  let resource = decodeURI(req.path);
+
+  if (!resource.startsWith(publicUrl)) {
+    return res.status(404).send(`Resource not found: ${resource}`);
+  }
+
+  resource = resource.replace(publicUrl, "");
+  const filePath = path.resolve(path.join(buildPath, resource));
+
+  if (fs.existsSync(filePath) && resource !== "" && resource !== "/") {
+    return res.sendFile(filePath);
+  } else {
+    return res.sendFile(path.resolve(buildPath, "index.html"));
+  }
+});
 
 const db = mysql.createConnection({
     host: 'mysql',
@@ -48,5 +68,5 @@ app.get('/api/patients/:id/evaluations/MoCA', (req, res) => {
 });
 
 app.listen(port, '0.0.0.0', () => {
-  console.log(`Server running on http://0.0.0.0:${port}`);
+  console.log(`Server running on http://0.0.0.0:${port}${publicUrl}`);
 });
