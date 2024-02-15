@@ -41,6 +41,20 @@ db.connect((err) => {
     console.log('Connected to the database');
 });
 
+app.get('/', (req, res) => {
+  db.query('SELECT * FROM patient WHERE numberId IN (SELECT patientNumberId FROM evaluation WHERE evaluationName = "MoCA")', (err, results) => {
+      if (err) throw err;
+      res.json(results);
+  });
+});
+
+app.get('/moca', (req, res) => {
+  db.query('SELECT * FROM patient WHERE numberId IN (SELECT patientNumberId FROM evaluation WHERE evaluationName = "MoCA")', (err, results) => {
+      if (err) throw err;
+      res.json(results);
+  });
+});
+
 app.get('/api/patients', (req, res) => {
     db.query('SELECT * FROM patient WHERE numberId IN (SELECT patientNumberId FROM evaluation WHERE evaluationName = "MoCA")', (err, results) => {
         if (err) throw err;
