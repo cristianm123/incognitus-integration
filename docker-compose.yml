@@ -1,52 +1,45 @@
 version: '3'
 services:
+
   mysql:
     image: mysql:5.7
     container_name: mysql
     networks:
-      - incognitus-net
-    ports:
-      - "3306:3306"
+      - vimov
     volumes:
       - incognitus_db:/var/lib/mysql
-      - ./mhealth-incognitus-backend/mysql_scripts/:/docker-entrypoint-initdb.d
+      - incognitus_config:/docker-entrypoint-initdb.d
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ouq8Vba6UFwuK4jW3z
       MYSQL_DATABASE: incognitus
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
       timeout: 20s
       retries: 3
 
-  incognitus:
-    build:
-      context: mhealth-incognitus-backend
-      dockerfile: Dockerfile # Adjust the path if needed
-    container_name: incognitus
-    networks:
-      - incognitus-net
-    environment:
-      END_BUCKET: ${END_BUCKET}
-      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
-      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
-      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    depends_on:
-      - mysql
-
   minio:
     image: quay.io/minio/minio
     container_name: minio
     networks:
-      - incognitus-net
-    ports:
-      - "9000:9000"
-      - "9090:9090"
+      - vimov
+      - proxy
     volumes:
       - incognitus_data:/data
     environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_ACCESS_KEY: Ek3aIA2MpWOqW0Z56Yee
+      MINIO_SECRET_KEY: D9NdhLcC8VwFnQiOU0zTF4oYHRolf8no8sszhDP3
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: 06DmX*_6RQj¡c^->lb/7
+      END_BUCKET: incognitus_end
+      RAW_BUCKET: incognitus_raw
     command: server /data --console-address ":9090"
+    deploy:
+      replicas: 1
+      labels:
+        com.df.distribute: "true"
+        com.df.notify: "true"
+        com.df.port: 9000
+        com.df.servicePath: "/incognitusminio"
 
   mc:
     image: minio/mc
@@ -55,53 +48,60 @@ services:
       - minio
       - incognitus
     networks:
-      - incognitus-net
+      - vimov
+    environment:
+      MINIO_ACCESS_KEY: Ek3aIA2MpWOqW0Z56Yee
+      MINIO_SECRET_KEY: D9NdhLcC8VwFnQiOU0zTF4oYHRolf8no8sszhDP3
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: 06DmX*_6RQj¡c^->lb/7
+      END_BUCKET: incognitus_end
+      RAW_BUCKET: incognitus_raw
     volumes:
-      - ./mhealth-incognitus-backend/minio_init.sh:/minio_init.sh
-    env_file: .env
+      - incognitus_config:/config_files
     entrypoint:
-      - /minio_init.sh
+      - /config_files/minio_init.sh
 
-  backend:
-    build:
-      context: moca-backend
-      dockerfile: Dockerfile
-    container_name: backend
-    ports:
-      - "4020:4020"
+  incognitus:
+    restart: always
+    image: i2thub.icesi.edu.co:5000/incognitus:latest
     networks:
-      - incognitus-net
+      - vimov
       - proxy
     depends_on:
-      mysql:
-        condition: service_healthy
-
-  frontend:
-    build:
-      context: patient-evaluation-ui
-      dockerfile: Dockerfile
-    container_name: frontend
-    networks:
-      - incognitus-net
-      - proxy
-    depends_on:
-      - backend
+      - mysql
     deploy:
       replicas: 1
       labels:
         com.df.distribute: "true"
         com.df.notify: "true"
-        com.df.port: "3000"
+        com.df.port: 5000
         com.df.servicePath: "/incognitus"
+
+  moca:
+    restart: always
+    image: i2thub.icesi.edu.co:5000/moca:latest
+    networks:
+      - vimov
+      - proxy
+    depends_on:
+      - mysql
+    deploy:
+      replicas: 1
+      labels:
+        com.df.distribute: "true"
+        com.df.notify: "true"
+        com.df.port: 4020
+        com.df.servicePath: "/moca"
 
 volumes:
   incognitus_data:
     external: true
   incognitus_db:
     external: true
+  incognitus_config:
+    external: true
 
 networks:
-  incognitus-net:
-    driver: overlay
+  vimov:
   proxy:
     external: true
