@@ -55,6 +55,10 @@ app.get('/moca', (req, res) => {
   });
 });
 
+app.get('/moca/test', (req, res) => {
+  res.json({ "hello": "moca" });
+});
+
 app.get('/api/patients', (req, res) => {
     db.query('SELECT * FROM patient WHERE numberId IN (SELECT patientNumberId FROM evaluation WHERE evaluationName = "MoCA")', (err, results) => {
         if (err) throw err;
@@ -83,6 +87,6 @@ app.get('/api/patients/:id/evaluations/MoCA', (req, res) => {
   });
 });
 
-app.listen(port, '0.0.0.0', () => {
-  console.log(`Server running on http://0.0.0.0:${port}${publicUrl}`);
+app.listen(port, () => {
+  console.log(`Server running on http://localhost:${port}${publicUrl}`);
 });
