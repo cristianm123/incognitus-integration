@@ -10,7 +10,7 @@ app.use(cors());  // Enable CORS for all routes
 const db = mysql.createConnection({
     host: 'mysql',
     user: 'root',
-    password: 'pass',
+    password: 'ouq8Vba6UFwuK4jW3z',
     database: 'incognitus'
 });
 
