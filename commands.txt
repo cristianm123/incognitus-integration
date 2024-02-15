@@ -1,0 +1,7 @@
+docker build -f mhealth-incognitus-backend/Dockerfile -t i2thub.icesi.edu.co:5000/incognitus mhealth-incognitus-backend
+docker tag i2thub.icesi.edu.co:5000/incognitus i2thub.icesi.edu.co:5000/incognitus:latest
+docker push i2thub.icesi.edu.co:5000/incognitus:latest
+
+docker build -f moca-backend/Dockerfile -t i2thub.icesi.edu.co:5000/moca moca-backend
+docker tag i2thub.icesi.edu.co:5000/moca i2thub.icesi.edu.co:5000/moca:latest
+docker push i2thub.icesi.edu.co:5000/moca:latest
